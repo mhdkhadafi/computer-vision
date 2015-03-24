@@ -19,20 +19,21 @@ def getImageGradientandTheta(im):
     return image_gradient, image_theta
 
 
-def storeBestCircle(hough, number):
+def storeBestCircle(hough_bins, number):
     bestCircles = ([])
 
     for x in range(number):
-        loc = np.where(hough == hough.max())
+        loc = np.where(hough_bins == hough_bins.max())
         circle = [loc[1][0], loc[0][0]]
         bestCircles = np.append(bestCircles, circle)
-        hough[loc[0][0], loc[1][0]] = 0
+        print hough_bins[loc[0][0], loc[1][0]]
+        hough_bins[loc[0][0], loc[1][0]] = 0
 
     bestCircles.shape = (number, 2)
     return bestCircles
 
 
-def hough(im, r=0, bins=1, draw=False):
+def hough(im, thet, r=0, bins=1, draw=False):
     if draw:
         plt.clf() # clear the figure
 
@@ -47,6 +48,7 @@ def hough(im, r=0, bins=1, draw=False):
 
     for x in range(im.shape[0]):
         for y in range(im.shape[1]):
+            xy_angle = thet[x, y]
             if im[x, y] == 1:
                 if draw:
                     hough_x = ([])
@@ -57,13 +59,18 @@ def hough(im, r=0, bins=1, draw=False):
                             domain = (x-x0)*(x-x0) + (y-y0)*(y-y0)
                             if domain < 0:
                                 continue
-                            radius= math.sqrt(domain)
-                            hough_bins[x0, y0, int(round(radius))] += 1
+                            radius = math.sqrt(domain)
+                            angle = roundSingleAngle(math.atan2((y0-y), (x0-x)) * 180 / math.pi)
+                            if angle == xy_angle:
+                                hough_bins[x0, y0, int(round(radius))] += 1
                     else:
                         if r*r - (x-x0)*(x-x0) < 0:
                             continue
                         y0 = y - math.sqrt(r*r - (x-x0)*(x-x0))
-                        hough_bins[x0 / bins, int(round(y0)) / bins] += 1
+                        y0 = int(round(y0))
+                        angle = roundSingleAngle(math.atan2((y0-y), (x0-x)) * 180 / math.pi)
+                        if angle == xy_angle:
+                            hough_bins[x0 / bins, y0 / bins] += 1
 
                     if draw:
                         hough_x = np.append(hough_x, x0)
@@ -74,6 +81,17 @@ def hough(im, r=0, bins=1, draw=False):
     if draw:
         plt.savefig("hough_space.jpg")
     return hough_bins
+
+
+def roundSingleAngle(single_angle):
+    if -22.5 < single_angle < 22.5 or single_angle > 157.5 or single_angle < -157.5:
+        return 0
+    elif 22.5 <= single_angle <= 67.5 or -157.5 <= single_angle <= -112.5:
+        return 135
+    elif 67.5 < single_angle < 112.5 or -112.5 < single_angle < -67.5:
+        return 90
+    else:
+        return 45
 
 
 def roundAngle(angle_array):
