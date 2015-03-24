@@ -6,6 +6,7 @@ from scipy.cluster.vq import kmeans, vq
 import matplotlib.pyplot as plt
 import colorsys
 import math
+import os
 
 #Part 1:
 def quantizeRGB(img, clusters, name):
@@ -23,7 +24,7 @@ def quantizeRGB(img, clusters, name):
     figure(1)
     imshow(clustered)
     title("RGB quantization (k="+str(clusters)+")")
-    savefig('figures/'+name+'_qztRGB.png')
+    savefig('Q2Figures/'+name+'_qztRGB.png')
     return clustered
 
 #Part 2:
@@ -62,7 +63,7 @@ def quantizeHSV(img, clusters, name):
     figure(1)
     imshow(res2.astype(uint8))
     title("H-channel quantization (k="+str(clusters)+")")
-    savefig('figures/'+name+'_qztH.png')
+    savefig('Q2Figures/'+name+'_qztH.png')
     return res2.astype(uint8)
 
 #Part 3:
@@ -83,7 +84,7 @@ def histHChl(img, clusters, name):
     plt.figure()
     plt.hist(h, bins=100)
     plt.title("H Channel before Quantization")
-    plt.savefig('figures/'+name+'_histBeforeQtz.png')
+    plt.savefig('Q2Figures/'+name+'_histBeforeQtz.png')
 
     pixelh=array(h)
     #perform clustering
@@ -94,7 +95,7 @@ def histHChl(img, clusters, name):
     plt.figure()
     plt.hist(qntizedH, bins=100)
     plt.title("H Channel after Quantization")
-    plt.savefig('figures/'+name+'_histAfterQtz.png')
+    plt.savefig('Q2Figures/'+name+'_histAfterQtz.png')
 
 
 #Part 5:
@@ -113,6 +114,9 @@ def q5(imgfile, clusters):
 
 
 if __name__ == '__main__':
+    if not os.path.exists("Q2Figures"):
+       os.makedirs("Q2Figures")
+
     ks = {4, 6}
     images = {'colorful1.jpg', 'colorful2.jpg', 'colorful3.png'}
     for image in images:
