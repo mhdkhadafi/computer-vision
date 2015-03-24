@@ -106,8 +106,9 @@ def drawDifferentQuant(im, radius, quant):
 
 # Function to detect all circles regardless of the radius
 # We are only using bins=1 and usegradient=True for this function
-def detectAllCircles(im, resize):
+def detectAllCircles(im, resize=1.):
     # All the same things that happened in detectCircles with useGradient, combined in 1 function
+    # While passing the resize variable
     # See helpers.py for definition of getImageEdgesAndTheta()
     image_edges, round_theta = getImageEdgesAndTheta(im, resize)
     print "done getting edges"
@@ -132,6 +133,7 @@ def detectAllCircles(im, resize):
             hough_bins[loc[0][0], loc[1][0], loc[2][0]] = 0
             continue
         else:
+            # Resizing the cirlces back up
             circle = [loc[1][0]*(1/resize), loc[0][0]*(1/resize), loc[2][0]*(1/resize)]
             bestCircles = np.append(bestCircles, circle)
             hough_bins[loc[0][0], loc[1][0], loc[2][0]] = 0
@@ -147,7 +149,7 @@ def detectAllCircles(im, resize):
 # Function to draw top circles regardless of the radius
 # Similar to drawCircles(), however the radius is variable
 # We are only using bins=1 and usegradient=True for this function
-def drawAllCircles(im, circles, resize):
+def drawAllCircles(im, circles, resize=1.):
     plt.clf()
     image = misc.imread(im)
     plt.imshow(image)

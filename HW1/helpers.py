@@ -236,6 +236,7 @@ def thresholding(im, high):
 # This is used a lot on other questions
 def getImageEdgesAndTheta(im, resize=1.):
     image = misc.imread(im, True)
+    # Resizing the image is necessary
     image = misc.imresize(image, resize)
     blurred_image = ndimage.gaussian_filter(image, sigma=1)
     image_gradient, image_theta = getImageGradientandTheta(blurred_image)
