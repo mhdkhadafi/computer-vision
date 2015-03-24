@@ -6,7 +6,7 @@ import scipy.ndimage as ndimage
 from scipy import misc
 import matplotlib.pyplot as plt
 
-from heplers import storeBestCircle, hough, roundAngle, supressNonMax, thresholding, getImageGradientandTheta, getImageEdgesAndTheta
+from helpers import storeBestCircle, hough, roundAngle, supressNonMax, thresholding, getImageGradientandTheta, getImageEdgesAndTheta
 
 
 __author__ = 'muhammadkhadafi'
@@ -45,6 +45,8 @@ def detectCircles(im, radius, usegradient):
     # See helpers.py for definition of thresholding()
     image_edges = thresholding(image_suppressed, threshold)
     print ("finish threshold " + im)
+
+    misc.imsave("Q1Results/" + im.split(".")[0] + "_" + str(usegradient) + "_edges.png", image_edges)
 
     # Do Hough transform on the image edges, returning the bins from the Hough space
     # See helpers.py for definition of hough()
@@ -108,16 +110,20 @@ def detectAllCircles(im, resize):
     # All the same things that happened in detectCircles with useGradient, combined in 1 function
     # See helpers.py for definition of getImageEdgesAndTheta()
     image_edges, round_theta = getImageEdgesAndTheta(im, resize)
+    print "done getting edges"
 
     # Using Hough() withour radius
     # See helpers.py for definition of hough()
     hough_bins = hough(image_edges, round_theta)
+    print "done hough"
 
     # Find the NUM_CIRCLES best circles
     bestCircles = ([])
     counter = 0
     while True:
         if counter == NUM_CIRCLES:
+            break
+        if hough_bins.max() == 0:
             break
         loc = np.where(hough_bins == hough_bins.max())
         circumference = 2*math.pi*loc[2][0]
@@ -126,12 +132,13 @@ def detectAllCircles(im, resize):
             hough_bins[loc[0][0], loc[1][0], loc[2][0]] = 0
             continue
         else:
-            circle = [loc[1][0], loc[0][0], loc[2][0]]
+            circle = [loc[1][0]*(1/resize), loc[0][0]*(1/resize), loc[2][0]*(1/resize)]
             bestCircles = np.append(bestCircles, circle)
             hough_bins[loc[0][0], loc[1][0], loc[2][0]] = 0
             counter += 1
 
-    bestCircles.shape = (NUM_CIRCLES, 3)
+    bestCircles.shape = (counter, 3)
+    print "done storing circles"
 
     # Return Nx3 array of x, y and r
     return bestCircles
@@ -140,15 +147,15 @@ def detectAllCircles(im, resize):
 # Function to draw top circles regardless of the radius
 # Similar to drawCircles(), however the radius is variable
 # We are only using bins=1 and usegradient=True for this function
-def drawAllCircles(im, circles):
+def drawAllCircles(im, circles, resize):
     plt.clf()
     image = misc.imread(im)
     plt.imshow(image)
     for center in circles:
         circle1 = plt.Circle((center[0], center[1]), center[2], color='b', fill=0, linewidth=3)
         plt.gca().add_artist(circle1)
-    plt.title(im + " (radius=all)")
-    plt.savefig("Q1Results/" + im.split(".")[0] + "_all_circles.jpg")
+    plt.title(im + " (radius=all, resize=" + str(resize) + ")")
+    plt.savefig("Q1Results/" + im.split(".")[0] + "_all_circles.png",  bbox_inches='tight')
 
 if __name__ == "__main__":
     # Create the results directory
@@ -157,37 +164,37 @@ if __name__ == "__main__":
 
     # Draw all 5 images with circles, with and without gradients
 
-    # centers = detectCircles('MoonCraters.jpg', 20, True)
-    # drawCircles('MoonCraters.jpg', centers, 20, True)
-    # centers = detectCircles('MoonCraters.jpg', 20, False)
-    # drawCircles('MoonCraters.jpg', centers, 20, False)
+    centers = detectCircles('MoonCraters.jpg', 20, True)
+    drawCircles('MoonCraters.jpg', centers, 20, True)
+    centers = detectCircles('MoonCraters.jpg', 20, False)
+    drawCircles('MoonCraters.jpg', centers, 20, False)
 
-    # centers = detectCircles('colorful3.png', 40, True)
-    # drawCircles('colorful3.png', centers, 40, True)
-    # centers = detectCircles('colorful3.png', 40, False)
-    # drawCircles('colorful3.png', centers, 40, False)
-    #
-    # centers = detectCircles('ladybug.jpg', 45, True)
-    # drawCircles('ladybug.jpg', centers, 45, True)
-    # centers = detectCircles('ladybug.jpg', 45, False)
-    # drawCircles('ladybug.jpg', centers, 45, False)
-    #
-    # centers = detectCircles('colorful2.jpg', 45, True)
-    # drawCircles('colorful2.jpg', centers, 45, True)
-    # centers = detectCircles('colorful2.jpg', 45, False)
-    # drawCircles('colorful2.jpg', centers, 45, False)
-    #
-    # centers = detectCircles('Planets.jpeg', 300, True)
-    # drawCircles('Planets.jpeg', centers, 300, True)
-    # centers = detectCircles('Planets.jpeg', 300, False)
-    # drawCircles('Planets.jpeg', centers, 300, False)
+    centers = detectCircles('colorful3.png', 40, True)
+    drawCircles('colorful3.png', centers, 40, True)
+    centers = detectCircles('colorful3.png', 40, False)
+    drawCircles('colorful3.png', centers, 40, False)
+
+    centers = detectCircles('ladybug.jpg', 45, True)
+    drawCircles('ladybug.jpg', centers, 45, True)
+    centers = detectCircles('ladybug.jpg', 45, False)
+    drawCircles('ladybug.jpg', centers, 45, False)
+
+    centers = detectCircles('colorful2.jpg', 45, True)
+    drawCircles('colorful2.jpg', centers, 45, True)
+    centers = detectCircles('colorful2.jpg', 45, False)
+    drawCircles('colorful2.jpg', centers, 45, False)
+
+    centers = detectCircles('Planets.jpeg', 300, True)
+    drawCircles('Planets.jpeg', centers, 300, True)
+    centers = detectCircles('Planets.jpeg', 300, False)
+    drawCircles('Planets.jpeg', centers, 300, False)
 
     # Draw the Hough space
-    # drawHoughSpace('MoonCraters.jpg', 20)
+    drawHoughSpace('MoonCraters.jpg', 20)
 
     # Draw multiple quantization of the 'MoonCraters.jpg'
-    # drawDifferentQuant('MoonCraters.jpg', 20, [1, 10, 20, 100])
+    drawDifferentQuant('MoonCraters.jpg', 20, [1, 10, 20, 100])
 
     # Find circles of and radius from 'MoonCraters.jpg'
-    centers_with_radius = detectAllCircles('MoonCraters.jpg', 0.1)
-    drawAllCircles('MoonCraters.jpg', centers_with_radius)
+    centers_with_radius = detectAllCircles('MoonCraters.jpg', 0.25)
+    drawAllCircles('MoonCraters.jpg', centers_with_radius, 0.25)
