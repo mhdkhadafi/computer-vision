@@ -122,7 +122,7 @@ def detectAllCircles(im, resize=1.):
     bestCircles = ([])
     counter = 0
     while True:
-        if counter == NUM_CIRCLES:
+        if counter == 10:
             break
         if hough_bins.max() == 0:
             break
@@ -166,36 +166,36 @@ if __name__ == "__main__":
 
     # Draw all 5 images with circles, with and without gradients
 
-    centers = detectCircles('MoonCraters.jpg', 20, True)
-    drawCircles('MoonCraters.jpg', centers, 20, True)
-    centers = detectCircles('MoonCraters.jpg', 20, False)
-    drawCircles('MoonCraters.jpg', centers, 20, False)
-
-    centers = detectCircles('colorful3.png', 40, True)
-    drawCircles('colorful3.png', centers, 40, True)
-    centers = detectCircles('colorful3.png', 40, False)
-    drawCircles('colorful3.png', centers, 40, False)
-
-    centers = detectCircles('ladybug.jpg', 45, True)
-    drawCircles('ladybug.jpg', centers, 45, True)
-    centers = detectCircles('ladybug.jpg', 45, False)
-    drawCircles('ladybug.jpg', centers, 45, False)
-
-    centers = detectCircles('colorful2.jpg', 45, True)
-    drawCircles('colorful2.jpg', centers, 45, True)
-    centers = detectCircles('colorful2.jpg', 45, False)
-    drawCircles('colorful2.jpg', centers, 45, False)
-
-    centers = detectCircles('Planets.jpeg', 300, True)
-    drawCircles('Planets.jpeg', centers, 300, True)
-    centers = detectCircles('Planets.jpeg', 300, False)
-    drawCircles('Planets.jpeg', centers, 300, False)
-
-    # Draw the Hough space
-    drawHoughSpace('MoonCraters.jpg', 20)
-
-    # Draw multiple quantization of the 'MoonCraters.jpg'
-    drawDifferentQuant('MoonCraters.jpg', 20, [1, 10, 20, 100])
+    # centers = detectCircles('MoonCraters.jpg', 20, True)
+    # drawCircles('MoonCraters.jpg', centers, 20, True)
+    # centers = detectCircles('MoonCraters.jpg', 20, False)
+    # drawCircles('MoonCraters.jpg', centers, 20, False)
+    #
+    # centers = detectCircles('colorful3.png', 40, True)
+    # drawCircles('colorful3.png', centers, 40, True)
+    # centers = detectCircles('colorful3.png', 40, False)
+    # drawCircles('colorful3.png', centers, 40, False)
+    #
+    # centers = detectCircles('ladybug.jpg', 45, True)
+    # drawCircles('ladybug.jpg', centers, 45, True)
+    # centers = detectCircles('ladybug.jpg', 45, False)
+    # drawCircles('ladybug.jpg', centers, 45, False)
+    #
+    # centers = detectCircles('colorful2.jpg', 45, True)
+    # drawCircles('colorful2.jpg', centers, 45, True)
+    # centers = detectCircles('colorful2.jpg', 45, False)
+    # drawCircles('colorful2.jpg', centers, 45, False)
+    #
+    # centers = detectCircles('Planets.jpeg', 300, True)
+    # drawCircles('Planets.jpeg', centers, 300, True)
+    # centers = detectCircles('Planets.jpeg', 300, False)
+    # drawCircles('Planets.jpeg', centers, 300, False)
+    #
+    # # Draw the Hough space
+    # drawHoughSpace('MoonCraters.jpg', 20)
+    #
+    # # Draw multiple quantization of the 'MoonCraters.jpg'
+    # drawDifferentQuant('MoonCraters.jpg', 20, [1, 10, 20, 100])
 
     # Find circles of and radius from 'MoonCraters.jpg'
     centers_with_radius = detectAllCircles('MoonCraters.jpg', 0.25)

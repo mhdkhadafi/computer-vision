@@ -1,0 +1,1 @@
+To run Q1.py and q2.py, the images should be in this folder
